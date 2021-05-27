@@ -1,0 +1,77 @@
+<html>
+ <head>
+     <title>Read List</title>
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ </head>
+ <body>
+   <h2>Listar Pessoas</h2>
+   <div th:unless="${@listis.isEmpty(pessoas)}">
+     <dl th:each="pessoa:${pessoas}">
+       <dt class="pessoaHeadline">
+         <span th:text="${pessoa.nome}">Nome</span>
+          <span th:text="${pessoa.email}">Email</span>
+           <span th:text="${pessoa.idade}">idade</span>
+       </dt>
+       
+     </dl>
+     <h3>Adcione uma nova pessoa:</h3>
+     <form action="#" th:action="@{/addPessoa}" th:object="${pessoa}" method="post">
+    <label for="nome">Name</label>
+    <input type="text" th:field="*{nome}" id="name" placeholder="Name">
+    <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></span>
+    <label for="email">Email</label>
+    <input type="text" th:field="*{email}" id="email" placeholder="Email">
+    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+       
+    <label for="idade">Idade</label>
+    <input type="text" th:field="*{idade}" id="idade" placeholder="idade">
+    <span th:if="${#fields.hasErrors('idade')}" th:errors="*{idade}"></span>
+    <input type="submit" value="Add idade">   
+</form>
+
+<form action="#" 
+  th:action="@{/update/{id}(id=${pessoa.id})}" 
+  th:object="${pessoa}" 
+  method="post">
+    <label for="nome">Nome</label>
+    <input type="text" th:field="*{nome}" id="nome" placeholder="Nome">
+    <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></span>
+    <label for="email">Email</label>
+    <input type="text" th:field="*{email}" id="email" placeholder="Email">
+    <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+    <label for="idade">Idade</label>
+    <input type="text" th:field="*{idade}" id="idade" placeholder="idade">
+    <span th:if="${#fields.hasErrors('idade')}" th:errors="*{idade}"></span>
+    <input type="submit" value="Update pessoa">   
+</form>
+<div th:switch="${pessoa}">
+    <h2 th:case="null">Nenhuma pessoa cadastrada!</h2>
+        <div th:case="*">
+            <h2>Pessoas</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Idade</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr th:each="pessoa : ${pessoa}">
+                    <td th:text="${pessoa.name}"></td>
+                    <td th:text="${pessoa.email}"></td>
+                    <td th:text="${pessoa.idade}"></td>
+                    <td><a th:href="@{/edit/{id}(id=${pessoa.id})}">Edit</a></td>
+                    <td><a th:href="@{/delete/{id}(id=${pessoa.id})}">Delete</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>      
+    
+</div>
+      </div>
+  
+</body>
+</html>

@@ -1,11 +1,10 @@
-package com.diegolirio.demo.domain.repositories;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-import com.diegolirio.demo.domain.orm.Produto;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
-@Repository
+package com.emmy.contatos.pessoa.repository;
 
-public interface PessoaRepositoty extends CrudRepository {
- 
+import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.emmy.contatos.pessoa.model.Pessoa;
+
+public interface PessoaRepository extends JpaRepository<Pessoa, Long> {
+    List<Pessoa> findByNome(String nome);
+
 }

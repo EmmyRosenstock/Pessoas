@@ -1,80 +1,62 @@
-import com.emmy.contatos.pessoa.service.PessoaServiceImpl;
+
+package com.emmy.contatos.pessoa.Controller;
+
+import com.emmy.contatos.pessoa.model.Pessoa;
+import com.emmy.contatos.pessoa.repository.PessoaRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 @Controller
-public class PessoaApiRestController {
 
- @Autowired
- private PessoaServiceImpl PessoaServiceImpl;
- 
- @RequestMapping(value = "/insert", method = RequestMethod.GET)
- public ModelAndView insert() {
-        return new ModelAndView("insert", "pessoa", new Pessoa());
- }
- 
- @RequestMapping(value = "/insert", method = RequestMethod.POST)
- public String submitInsert(@Valid @ModelAttribute("pessoa")Pessoa pessoa, 
-      BindingResult result, ModelMap model) {
-        
- if (result.hasErrors()) {
-            return "error";
-        }
-        
- pessoaServiceImpl.insertPessoa(pessoa);
-        
-        return "redirect:";
- }
- 
- @RequestMapping(value = "/delete", method = RequestMethod.GET)
- public ModelAndView delete(Integer id) {
- 
- return new ModelAndView("delete", "pessoa", pessoaServiceImpl.getPessoaById(id).get());
- }
- 
- @RequestMapping(value = "/delete", method = RequestMethod.POST)
- public String submitDelete(@Valid @ModelAttribute("pessoa")Pessoa pessoa,
-      BindingResult result, ModelMap model) {
-        
- if (result.hasErrors()) {
-            return "error";
-        }
- 
- pessoaServiceImpl.deletePessoaById(pessoa.getId());
-        
-        return "redirect:";
- }
- 
- @RequestMapping(value = "/update", method = RequestMethod.GET)
- public ModelAndView update(Integer id) {
- 
-        return new ModelAndView("update", "pessoa", pessoaServiceImpl.getPessoaById(id).get());
- }
- 
- @RequestMapping(value = "/update", method = RequestMethod.POST)
- public String submitUpdate(@Valid @ModelAttribute("pessoa")Pessoa pessoa,
-      BindingResult result, ModelMap model) {
-        
- if (result.hasErrors()) {
-            return "error";
-        }
- 
- pessoaServiceImpl.updatePessoa(pessoa);
-        
-        return "redirect:";
- }
- 
- @RequestMapping(value = "/read", method = RequestMethod.GET)
- public ModelAndView read() {
-        
-        ModelAndView mav = new ModelAndView("read");
-        mav.addObject("pessoa", PessoaServiceImpl.getAllPessoas());
-        return mav;
- }
- 
- @RequestMapping(value = "/", method = RequestMethod.GET)
- public ModelAndView index() {
-        
-        ModelAndView mav = new ModelAndView("index");
-        mav.addObject("pessoa", PessoaServiceImpl.getAllPessoa());
-        return mav;
- }
+@RequestMapping("/")
+
+public class PessoaApiRestController {
+       private PessoaRepository pessoaRepository;
+
+       @Autowired
+       public PessoaApiRestController(PessoaRepository pessoaRepository) {
+              this.pessoaRepository = pessoaRepository;
+       }
+
+       @RequestMapping(value = "/{pessoa}", method = RequestMethod.GET)
+       public String listaPessoas(@PathVariable("pessoa") String pessoa, Model model) {
+              List<Pessoa> listaPessoas = pessoaRepository.findByNome(pessoa);
+              if (listaPessoas != null) {
+                     model.addAttribute("pesoas", listaPessoas);
+              }
+              return "listaPessoas";
+       }
+
+       @RequestMapping(value = "/{pessoa}", method = RequestMethod.POST)
+       public String adicionaPessoa(@PathVariable("pessoa") String nome, Pessoa pessoa) {
+              pessoa.setNome(nome);
+              pessoaRepository.save(pessoa);
+              return "redirect:/{pessoa}";
+       }
+
+       @GetMapping("/edit/{id}")
+       public String showUpdateForm(@PathVariable("id") long id, Model model) {
+              Pessoa user = pessoaRepository.findById(id)
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+
+              model.addAttribute("user", user);
+              return "update-user";
+       }
+
+       @GetMapping("/delete/{id}")
+       public String deleteUser(@PathVariable("id") long id, Model model) {
+              Pessoa user = pessoaRepository.findById(id)
+                            .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
+              pessoaRepository.delete(user);
+              return "redirect:/index";
+       }
+
 }
