@@ -1,0 +1,21 @@
+html>
+ <head>
+     <title>Atualizar</title>
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ </head>
+ <body>
+ <form action="/update" method="POST" modelAttribute="pessoa">
+ 
+ ID:<br>
+   <input type="text" name="id" th:value="${pessoa.id}" readOnly="true"><br>
+   <br>
+   Nome:<br>
+   <input type="text" name="name" th:value="${pessoa.name}"><br>
+   <br>
+   Email:<br>
+   <input type="text" name="email" th:value="${pessoa.email}"><br>
+   
+   <input type="submit" value="Atualizar">
+ </form>
+ </body>
+</html>
